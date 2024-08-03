@@ -16,7 +16,7 @@ vluint64_t sim_time = 0;
 vluint64_t posedge_cnt = 0;
 
 int tms_index = 0;
-std::vector<int> rst_tms = {1, 1, 1, 1, 1};
+std::vector<int> resetTapVec = {1, 1, 1, 1, 1};
 
 // Assert arst only on the first clock edge.
 void dut_reset(Vjtag *dut) {
@@ -32,8 +32,8 @@ void dut_reset(Vjtag *dut) {
 }
 
 void resetTap(Vjtag *dut) {
-  if ((sim_time > RESET_NEG_EDGE) && (tms_index < rst_tms.size())) {
-    dut->i_tms = rst_tms[tms_index];
+  if ((sim_time > RESET_NEG_EDGE) && (tms_index < resetTapVec.size())) {
+    dut->i_tms = resetTapVec[tms_index];
     tms_index++;
   }
 }
