@@ -46,18 +46,18 @@ module jtag_shiftReg
     else
       shiftReg_q <= shiftReg_d;
 
-  // Data is shifted in to MSB of the shift register and the lsb is moved to the
+  // Data is shifted in to LSB of the shift register and the lsb is moved to the
   // TDO pin. If state is pause IR/DR, the shift register maintains it's value.
   always_comb
     if (stateIsCapture)
       shiftReg_d = capture;
     else if (stateIsShift)
-      shiftReg_d = {i_tdi, shiftReg_q[REG_W-1:1]};
+      shiftReg_d = {shiftReg_q[REG_W-2:0], i_tdi};
     else
       shiftReg_d = shiftReg_q;
 
   always_comb
-    o_tdo = shiftReg_q[0];
+    o_tdo = shiftReg_q[REG_W-1];
 
   // Update IR/DR with shift register value.
   always_comb

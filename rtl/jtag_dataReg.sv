@@ -62,7 +62,7 @@ module jtag_dataReg
       IDCODE:
         o_dataReg = idCode_q;
       BYPASS:
-        o_dataReg = {(REG_W-1)'(0), bypass_q};
+        o_dataReg = {bypass_q, (REG_W-1)'(0)};
       BSR:
         o_dataReg = bsr_q;
       USER:
