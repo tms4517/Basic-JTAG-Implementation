@@ -41,7 +41,7 @@ module jtag_shiftReg
   logic [REG_W-1:0] shiftReg_d, shiftReg_q;
 
   always_ff @(posedge i_tclk, negedge i_trst_n)
-    if (i_trst_n)
+    if (!i_trst_n)
       shiftReg_q <= '0;
     else
       shiftReg_q <= shiftReg_d;

@@ -15,7 +15,7 @@ module jtag_instrReg
   logic [REG_W-1:0] instr_q;
 
   always_ff @(posedge i_tclk, negedge i_trst_n)
-    if (i_trst_n)
+    if (!i_trst_n)
       instr_q <= '0;
     else if (i_stateIsUpdateIr)
       instr_q <= i_shiftReg;

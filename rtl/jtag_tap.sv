@@ -18,7 +18,7 @@ module jtag_tap
   ty_STATE_TAP_FSM state_q, state_d;
 
   always_ff @(posedge i_tclk, negedge i_trst_n)
-    if (i_trst_n)
+    if (!i_trst_n)
       state_q <= STATE_RESET;
     else
       state_q <= state_d;
