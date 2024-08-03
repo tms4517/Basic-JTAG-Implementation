@@ -18,6 +18,14 @@ vluint64_t posedge_cnt = 0;
 int tms_index = 0;
 std::vector<int> resetTapVec = {1, 1, 1, 1, 1};
 
+int shiftDrTmsVec_i = 0;
+std::vector<int> shiftDrTmsVec = {0, 1, 0, 0};
+
+int shiftDataVec_i = 0;
+std::vector<int> shiftDataVec = {1, 0, 1, 0, 1, 0};
+
+int tapState = 0;
+
 // Assert arst only on the first clock edge.
 void dut_reset(Vjtag *dut) {
   if ((sim_time > 2) && (sim_time < RESET_NEG_EDGE)) {
@@ -35,6 +43,23 @@ void resetTap(Vjtag *dut) {
   if ((sim_time > RESET_NEG_EDGE) && (tms_index < resetTapVec.size())) {
     dut->i_tms = resetTapVec[tms_index];
     tms_index++;
+  }
+}
+
+void setTapToShiftDr(Vjtag *dut) {
+  if ((sim_time > RESET_NEG_EDGE) && (shiftDrTmsVec_i < shiftDrTmsVec.size())) {
+    dut->i_tms = shiftDrTmsVec[shiftDrTmsVec_i];
+    shiftDrTmsVec_i++;
+  } else if (shiftDrTmsVec_i == shiftDrTmsVec.size()){
+    tapState = 6;
+  }
+}
+
+void shiftDataIn(Vjtag *dut){
+  if ((tapState == 6) && (shiftDataVec_i < shiftDataVec.size()))
+  {
+    dut->i_tdi = shiftDataVec[shiftDataVec_i];
+    shiftDataVec_i++;
   }
 }
 
