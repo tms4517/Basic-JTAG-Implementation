@@ -1,0 +1,14 @@
+# Ignore VSCode configurations.
+/.vscode
+
+# Ignore verilated files.
+/tb/obj_dir
+
+# Ignore waveform file.
+tb/waveform.vcd
+
+# Ignore waveform signal list.
+tb/*.gtkw
+
+# Ignore verilator generated files.
+tb/*.verilate
