@@ -44,7 +44,7 @@ module jtag_dataReg
   // Register whose data is used by external logic.
   logic [REG_W-1:0] user_q;
 
-  always_ff @(posedge i_tclk)
+  always_ff @(posedge i_tclk, negedge i_trst_n)
     if (i_trst_n)
       user_q <= '0;
     else if (i_stateIsUpdateDr)
