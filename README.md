@@ -60,7 +60,3 @@ Its schematic can be found in `docs/jtag_dataReg.svg`.
 **Note:**
 See: https://github.com/tms4517/Yosys_to_aid_with_RTL_design on how to generate
 schematics and FSM diagrams.
-
-Bugs FIXME:
-jtag_dataReg.sv: Line 65
-jtag_shiftReg.sv: Line 55
