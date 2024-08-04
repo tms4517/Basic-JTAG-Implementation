@@ -60,3 +60,9 @@ Its schematic can be found in `docs/jtag_dataReg.svg`.
 **Note:**
 See: https://github.com/tms4517/Yosys_to_aid_with_RTL_design on how to generate
 schematics and FSM diagrams.
+
+## TB
+
+Shift register shifting data in from `i_tdi` and shifting the data out 32 clock
+cycles later from `o_tdo`.
+![shifing data in](docs/shiftingDataIn.png)
