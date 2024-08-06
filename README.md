@@ -66,3 +66,8 @@ schematics and FSM diagrams.
 Shift register shifting data in from `i_tdi` and shifting the data out 32 clock
 cycles later from `o_tdo`.
 ![shifing data in](docs/shiftingDataIn.png)
+
+TAP set to capture IR state where the device `IR_SCAN_CODE` is loaded into the
+shift register 1 clock sycle after `o_stateIsShiftIr`. The `IR_SCAN_CODE` is 
+then shifted out of `o_tdo` 32 clock cycles later.
+![capture IR then shift IR](docs/captureIr_shiftIr.png)
