@@ -8,7 +8,7 @@
 #include <verilated.h>       // Common verilator routines.
 #include <verilated_vcd_c.h> // Write waverforms to a VCD file.
 
-#define MAX_SIM_TIME 100 // Number of clk edges.
+#define MAX_SIM_TIME 150 // Number of clk edges.
 #define RESET_NEG_EDGE 5 // Clk edge number to deassert arst.
 #define VERIF_START_TIME 7
 
@@ -32,6 +32,10 @@ int captureIrTmsVec_i = 0;
 std::vector<int> captureIrTmsVec = {0, 1, 1, 0};
 int captureIrCompleted = 0;
 
+int captureDrTmsVec_i = 0;
+std::vector<int> captureDrTmsVec = {0, 1, 0};
+int captureDrCompleted = 0;
+
 int shiftIrTmsVec_i = 0;
 std::vector<int> shiftIrTmsVec = {0, 1, 1, 0, 0};
 
@@ -41,7 +45,6 @@ int updateIrCompleted = 0;
 
 int tapState = 0;
 // }}} Vectors to drive tdi and tms pins & global variables to track TAP state
-
 
 // Assert arst only on the first clock edge.
 void dut_reset(Vjtag *dut) {
@@ -96,6 +99,17 @@ void setTapToCaptureIr(Vjtag *dut) {
   }
 }
 
+void setTapToCaptureDr(Vjtag *dut) {
+  if ((sim_time > RESET_NEG_EDGE) &&
+      (captureDrTmsVec_i < captureDrTmsVec.size())) {
+    dut->i_tms = captureDrTmsVec[captureDrTmsVec_i];
+    captureDrTmsVec_i++;
+  } else if (captureDrTmsVec_i == captureDrTmsVec.size()) {
+    tapState = 4;
+    captureDrCompleted = 1;
+  }
+}
+
 void setTapToUpdateIr(Vjtag *dut) {
   if ((sim_time > RESET_NEG_EDGE) && (shiftIrTmsVec_i < shiftIrTmsVec.size())) {
     dut->i_tms = shiftIrTmsVec[shiftIrTmsVec_i];
@@ -114,7 +128,6 @@ void shiftDataIn(Vjtag *dut) {
   }
 }
 // }}} Helper functions to set TAP to a particular state
-
 
 void demonstrate_CaptureIrShiftIr(Vjtag *dut) {
   setTapToCaptureIr(dut);
@@ -142,9 +155,14 @@ void demonstrate_setIrShiftDr(Vjtag *dut) {
   }
   if (shiftDataVec_i == shiftDataVec.size()) {
     setTapToReset(dut);
+    // In the state transition of reset, the IR gets updated as it passes
+    // through update IR.
   }
-  // Data seems to be shifting for 3 clock cycles instead of 2. Need to debug
-  // tb. setTapToUpdateIr(dut);
+  if (resetCompleted == 1) {
+    setTapToCaptureDr(dut);
+    dut->i_tdi = 0;
+    // Since tms is held at 0, TAP progress to shifting DR.
+  }
 }
 
 int main(int argc, char **argv, char **env) {
