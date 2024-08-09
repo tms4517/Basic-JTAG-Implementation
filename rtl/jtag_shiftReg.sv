@@ -12,6 +12,8 @@ module jtag_shiftReg
   , input  var logic i_stateIsShiftIr
 
   , input  var logic [REG_W-1:0] i_dataReg
+  , input  var logic [REG_W-1:0] i_instrReg
+
   , output var logic [REG_W-1:0] o_shiftReg
   );
 
@@ -28,7 +30,7 @@ module jtag_shiftReg
     // the selected data register. If i_stateIsCaptureIr, load the shift
     // register with the IR_SCAN_CODE set in `jtag_pa.sv`.
     always_comb
-      capture = i_stateIsCaptureDr ? i_dataReg : IR_SCAN_CODE;
+      capture = i_stateIsCaptureDr ? i_dataReg : i_instrReg;
   // }}} Capture
 
   // {{{ Shift
