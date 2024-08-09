@@ -54,6 +54,8 @@ module jtag
   , .i_stateIsShiftIr (stateIsShiftIr)
 
   , .i_dataReg (dataReg)
+  , .i_instrReg (instrReg)
+
   , .o_shiftReg (shiftReg)
   );
   // }}} Shift Reg
@@ -63,9 +65,11 @@ module jtag
   ( .i_tclk
   , .i_trst_n
 
-  , .i_stateIsUpdateIr (stateIsUpdateIr)
+  , .i_stateIsUpdateIr  (stateIsUpdateIr)
+  , .i_stateIsCaptureIr (stateIsCaptureIr)
 
   , .i_shiftReg (shiftReg)
+
   , .o_instrReg (instrReg)
   );
   // }}} Instr Reg
