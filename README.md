@@ -35,8 +35,9 @@ The schematic below shows its implementation:
 
 ### jtag_instrReg.sv
 
-This module implements the JTAG instruction register which is set to the data
-stored in the shift register when the TAP is in STATE_UPDATE_IR.
+This module implements the JTAG instruction register. When the TAP is in
+`STATE_UPDATE_IR`, it is set to the data shifted into the shift register. When the TAP is in `STATE_CAPTURE_IR`, it is set to the `IR_SCAN_CODE`, so that the
+shift register can shift the value out.
 
 Its schematic can be found in `docs/jtag_instrReg.svg`.
 
@@ -68,6 +69,6 @@ cycles later from `o_tdo`.
 ![shifing data in](docs/shiftingDataIn.png)
 
 TAP set to capture IR state where the device `IR_SCAN_CODE` is loaded into the
-shift register 1 clock sycle after `o_stateIsShiftIr`. The `IR_SCAN_CODE` is 
+shift register 1 clock sycle after `o_stateIsShiftIr`. The `IR_SCAN_CODE` is
 then shifted out of `o_tdo` 32 clock cycles later.
 ![capture IR then shift IR](docs/captureIr_shiftIr.png)
