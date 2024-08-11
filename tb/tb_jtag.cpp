@@ -16,9 +16,9 @@ vluint64_t sim_time = 0;
 vluint64_t posedge_cnt = 0;
 
 // {{{ Vectors to drive tdi and tms pins & global variables to track TAP state
-int tms_index = 0;
-std::vector<int> setTapToResetVec = {1, 1, 1, 1, 1};
-int resetCompleted = 0;
+int resetTapTmsVec_i = 0;
+std::vector<int> resetTapTmsVec = {1, 1, 1, 1, 1};
+int resetTapCompleted = 0;
 
 int shiftDrTmsVec_i = 0;
 std::vector<int> shiftDrTmsVec = {0, 1, 0, 0};
@@ -61,12 +61,12 @@ void dut_reset(Vjtag *dut) {
 
 // {{{ Helper functions to set TAP to a particular state
 void setTapToReset(Vjtag *dut) {
-  if ((sim_time > RESET_NEG_EDGE) && (tms_index < setTapToResetVec.size())) {
-    dut->i_tms = setTapToResetVec[tms_index];
-    tms_index++;
-  } else if (tms_index == setTapToResetVec.size()) {
+  if ((sim_time > RESET_NEG_EDGE) && (resetTapTmsVec_i < resetTapTmsVec.size())) {
+    dut->i_tms = resetTapTmsVec[resetTapTmsVec_i];
+    resetTapTmsVec_i++;
+  } else if (resetTapTmsVec_i == resetTapTmsVec.size()) {
     tapState = 0;
-    resetCompleted = 1;
+    resetTapCompleted = 1;
   }
 }
 
@@ -136,7 +136,7 @@ void demonstrate_CaptureIrShiftIr(Vjtag *dut) {
     setTapToReset(dut);
   }
 
-  if (captureIrCompleted && resetCompleted) {
+  if (captureIrCompleted && resetTapCompleted) {
     setTapToShiftIr(dut);
   }
 }
@@ -158,7 +158,7 @@ void demonstrate_setIrShiftDr(Vjtag *dut) {
     // In the state transition of reset, the IR gets updated as it passes
     // through update IR.
   }
-  if (resetCompleted == 1) {
+  if (resetTapCompleted == 1) {
     setTapToCaptureDr(dut);
     dut->i_tdi = 0;
     // Since tms is held at 0, TAP progress to shifting DR.
