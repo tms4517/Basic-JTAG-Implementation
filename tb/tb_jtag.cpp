@@ -24,8 +24,8 @@ int shiftDrTmsVec_i = 0;
 std::vector<int> shiftDrTmsVec = {0, 1, 0, 0};
 
 int shiftDataVec_i = 0;
-// std::vector<int> shiftDataVec = {1, 0, 1, 0, 1, 0};
-std::vector<int> shiftDataVec = {1, 1};
+std::vector<int> shiftDataVec0 = {1, 0, 1, 0, 1, 0};
+std::vector<int> shiftDataVec1 = {1, 1};
 int dataShiftCompleted = 0;
 
 int captureIrTmsVec_i = 0;
@@ -119,12 +119,22 @@ void setTapToUpdateIr(Vjtag *dut) {
   }
 }
 
-void shiftDataIn(Vjtag *dut) {
-  if (shiftDataVec_i < shiftDataVec.size()) {
-    dut->i_tdi = shiftDataVec[shiftDataVec_i];
-    shiftDataVec_i++;
-  } else {
-    dataShiftCompleted = 1;
+void shiftDataIn(Vjtag *dut, int vec_num) {
+  if (vec_num == 0) {
+    if (shiftDataVec_i < shiftDataVec0.size()) {
+      dut->i_tdi = shiftDataVec0[shiftDataVec_i];
+      shiftDataVec_i++;
+    } else {
+      dataShiftCompleted = 1;
+    }
+  }
+  else if (vec_num == 1) {
+    if (shiftDataVec_i < shiftDataVec1.size()) {
+      dut->i_tdi = shiftDataVec1[shiftDataVec_i];
+      shiftDataVec_i++;
+    } else {
+      dataShiftCompleted = 1;
+    }
   }
 }
 // }}} Helper functions to set TAP to a particular state
@@ -144,16 +154,16 @@ void demonstrate_CaptureIrShiftIr(Vjtag *dut) {
 void demonstrate_ShiftDataInThenOut(Vjtag *dut) {
   setTapToShiftDr(dut);
   if (tapState == 6) {
-    shiftDataIn(dut);
+    shiftDataIn(dut, 0);
   }
 }
 
 void demonstrate_setIrShiftDr(Vjtag *dut) {
   setTapToShiftIr(dut);
   if (tapState == 7) {
-    shiftDataIn(dut);
+    shiftDataIn(dut, 1);
   }
-  if (shiftDataVec_i == shiftDataVec.size()) {
+  if (shiftDataVec_i == shiftDataVec1.size()) {
     setTapToReset(dut);
     // In the state transition of reset, the IR gets updated as it passes
     // through update IR.
