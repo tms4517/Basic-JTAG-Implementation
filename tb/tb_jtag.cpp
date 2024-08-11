@@ -139,18 +139,8 @@ void shiftDataIn(Vjtag *dut, int vec_num) {
 }
 // }}} Helper functions to set TAP to a particular state
 
-void demonstrate_CaptureIrShiftIr(Vjtag *dut) {
-  setTapToCaptureIr(dut);
-
-  if (captureIrCompleted) {
-    setTapToReset(dut);
-  }
-
-  if (captureIrCompleted && resetTapCompleted) {
-    setTapToShiftIr(dut);
-  }
-}
-
+// Set TAP to STATE_SHIFT_DR state. Data is shifted into the shift register
+// and 32 clock cycles later, shifted out.
 void demonstrate_ShiftDataInThenOut(Vjtag *dut) {
   setTapToShiftDr(dut);
   if (tapState == 6) {
@@ -158,6 +148,26 @@ void demonstrate_ShiftDataInThenOut(Vjtag *dut) {
   }
 }
 
+// Set TAP to STATE_CAPTURE_IR. This loads the device IR_SCAN_CODE into the
+// shift register 1 clock cycle later. The TAP is then reset and set to
+// STATE_SHIFT_IR. 32 clock cycles later the IR_SCAN_CODE is shifted out to the
+// td0 port.
+void demonstrate_CaptureIrShiftIr(Vjtag *dut) {
+  setTapToCaptureIr(dut);
+  if (captureIrCompleted) {
+    setTapToReset(dut);
+  }
+  if (captureIrCompleted && resetTapCompleted) {
+    setTapToShiftIr(dut);
+  }
+}
+
+// Set TAP to STATE_SHIFT_IR. Shift the BSR instruction opcode into the shift
+// register. Set the TAP to STATE_CAPTURE_IR, this updates the instruction
+// register with the BSR opcode. As the instruction register forms the select
+// line of the data register MUX, the data register MUX is updated with BSR
+// value. The TAP is then set to STATE_SHIFT_DR and the BSR is shifted out to
+// the tdo pin.
 void demonstrate_setIrShiftDr(Vjtag *dut) {
   setTapToShiftIr(dut);
   if (tapState == 7) {
@@ -168,7 +178,7 @@ void demonstrate_setIrShiftDr(Vjtag *dut) {
     // In the state transition of reset, the IR gets updated as it passes
     // through update IR.
   }
-  if (resetTapCompleted == 1) {
+  if (resetTapCompleted) {
     setTapToCaptureDr(dut);
     dut->i_tdi = 0;
     // Since tms is held at 0, TAP progress to shifting DR.
