@@ -35,7 +35,7 @@ waveform.vcd: ./obj_dir/V$(TOP_MODULE)
 .stamp.verilate: $(RTL_PATH)/$(TOP_MODULE).sv tb_$(TOP_MODULE).cpp
 	@echo
 	@echo "### VERILATING ###"
-	verilator -Wall --trace --x-assign unique --x-initial unique -cc -I../rtl/ $(PACKAGE).sv $(RTL_PATH)/$(TOP_MODULE).sv --top-module jtag --exe tb_$(TOP_MODULE).cpp
+	verilator -CFLAGS -DSHIFT_DATAIN_OUT -Wall --trace --x-assign unique --x-initial unique -cc -I../rtl/ $(PACKAGE).sv $(RTL_PATH)/$(TOP_MODULE).sv --top-module jtag --exe tb_$(TOP_MODULE).cpp
 	@touch .stamp.verilate
 
 .PHONY: lint
