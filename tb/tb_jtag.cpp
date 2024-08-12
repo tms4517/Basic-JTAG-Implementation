@@ -59,9 +59,11 @@ void dut_reset(Vjtag *dut) {
   }
 }
 
+
 // {{{ Helper functions to set TAP to a particular state
 void setTapToReset(Vjtag *dut) {
-  if ((sim_time > RESET_NEG_EDGE) && (resetTapTmsVec_i < resetTapTmsVec.size())) {
+  if ((sim_time > RESET_NEG_EDGE) &&
+      (resetTapTmsVec_i < resetTapTmsVec.size())) {
     dut->i_tms = resetTapTmsVec[resetTapTmsVec_i];
     resetTapTmsVec_i++;
   } else if (resetTapTmsVec_i == resetTapTmsVec.size()) {
@@ -127,8 +129,7 @@ void shiftDataIn(Vjtag *dut, int vec_num) {
     } else {
       dataShiftCompleted = 1;
     }
-  }
-  else if (vec_num == 1) {
+  } else if (vec_num == 1) {
     if (shiftDataVec_i < shiftDataVec1.size()) {
       dut->i_tdi = shiftDataVec1[shiftDataVec_i];
       shiftDataVec_i++;
@@ -209,7 +210,13 @@ int main(int argc, char **argv, char **env) {
     if (dut->i_tclk == 1) {
       posedge_cnt++;
 
+#ifdef SHIFT_DATAIN_OUT
+      demonstrate_ShiftDataInThenOut(dut);
+#elif CAPTUREIR_SHIFTIR
+      demonstrate_CaptureIrShiftIr(dut);
+#elif SETIR_SHIFTDR
       demonstrate_setIrShiftDr(dut);
+#endif
     }
     // Write all the traced signal values into the waveform dump file.
     m_trace->dump(sim_time);
