@@ -98,6 +98,15 @@ cd tb && make -f Makefile2 all
 
 ### demonstrate_setIrShiftDr
 
+The TAP is set to `STATE_SHIFT_IR` by driving the `i_tms` pin 0 -> 1 -> 1 -> 0  -> 0 on successive clock cycles. THis is indicated by the yellow marker. The BSR
+instruction opcode (32'd3) is then shifted into the shift register. This is
+indicated by the grey marker. The TAP is then set to `STATE_UPDATE_IR` and this
+updates the IR on the following clock cycle with the BSR opcode. This is
+indicated by the orange marker. The instruction register forms the select
+line of the data register MUX and as a result the BSR is MUXed to `o_dataReg`.
+The TAP is then set to `STATE_CAPTURE_DR` and this updates the shift register with the BSR data. This is indicated by the pink marker. The TAP is then set to `STATE_SHIFT_DR` and the BSR is shifted out to the tdo pin. This is indicated
+by the blue marker.
+
 ![capture IR then shift IR](docs/setIrShiftDr.png)
 
 To run the simulation and generate the waveform:
