@@ -97,3 +97,10 @@ cd tb && make -f Makefile2 all
 ```
 
 ### demonstrate_setIrShiftDr
+
+![capture IR then shift IR](docs/setIrShiftDr.png)
+
+To run the simulation and generate the waveform:
+```
+cd tb && make -f Makefile3 all
+```
