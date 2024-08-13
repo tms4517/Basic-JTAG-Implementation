@@ -36,8 +36,8 @@ The schematic below shows its implementation:
 ### jtag_instrReg.sv
 
 This module implements the JTAG instruction register. When the TAP is in
-`STATE_UPDATE_IR`, it is set to the data shifted into the shift register. When the TAP is in `STATE_CAPTURE_IR`, it is set to the `IR_SCAN_CODE`, so that the
-shift register can shift the value out.
+`STATE_UPDATE_IR`, the IR is set to the data shifted into the shift register.
+When the TAP is in `STATE_CAPTURE_IR`, it is set to the `IR_SCAN_CODE`, so that the shift register can shift the value out.
 
 Its schematic can be found in `docs/jtag_instrReg.svg`.
 
@@ -58,17 +58,42 @@ to the shift reg).
 
 Its schematic can be found in `docs/jtag_dataReg.svg`.
 
-**Note:**
-See: https://github.com/tms4517/Yosys_to_aid_with_RTL_design on how to generate
-schematics and FSM diagrams.
 
 ## TB
 
-Shift register shifting data in from `i_tdi` and shifting the data out 32 clock
-cycles later from `o_tdo`.
+A basic directed TB was created using verilator. The TB consists of various
+functions that set the TAP to a particular state by driving the `i_tms` port, shifting data in by driving the `i_tdi` port and visually confirming the
+expected data is driven on the `o_tdo` port.
+
+The following functions have been created to demonstrate the JTAG functionality.
+
+### demonstrate_ShiftDataInThenOut
+
+The TAP is set to `STATE_SHIFT_DR` by driving the `i_tms` pin 0 -> 1 -> 0 -> 0
+on successive clock cycles. On successive clock cycles, data 1 -> 0 -> 1 -> 0
+-> 1 -> 0 is shifted into the shift register by driving the `i_tdi` pin. 32 clock cycles later the sequence of data is driven out of `o_tdo`. This is
+indicated by the red markers shown in the figure below.
 ![shifing data in](docs/shiftingDataIn.png)
 
-TAP set to capture IR state where the device `IR_SCAN_CODE` is loaded into the
-shift register 1 clock sycle after `o_stateIsShiftIr`. The `IR_SCAN_CODE` is
-then shifted out of `o_tdo` 32 clock cycles later.
-![capture IR then shift IR](docs/captureIr_shiftIr.png)
+To run the simulation and generate the waveform:
+```
+cd tb && make -f Makefile1 all
+```
+
+### demonstrate_CaptureIrShiftIr
+
+The TAP is set to `STATE_CAPTURE_IR` by driving the `i_tms` pin 0 -> 1 -> 1 -> 0
+on successive clock cycles. This is indicated by the red markers in the image below. 1 clock cycle later, the shift register is set to 32'b1 which is the
+`IR_SCAN_CODE`. The TAP is then reset by by asserting `i_tms` for 5 clock
+cycles. This is indicated by the blue marker. The TAP is then set to
+`STATE_SHIFT_IR` by driving `i_tms` 0 -> 1 -> 1 -> 0 -> 0 on successive clock
+cycles. This is indicated by the yellow marker. 32'b1 is shifted out 32 clock
+cycles later.
+![capture IR then shift IR](docs/captureIr_shiftIr2.png)
+
+To run the simulation and generate the waveform:
+```
+cd tb && make -f Makefile2 all
+```
+
+### demonstrate_setIrShiftDr
