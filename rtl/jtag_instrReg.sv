@@ -18,7 +18,7 @@ module jtag_instrReg
 
   always_ff @(posedge i_tclk, negedge i_trst_n)
     if (!i_trst_n)
-      instr_q <= '0;
+      instr_q <= IR_SCAN_CODE;
     else
       instr_q <= instr_d;
 

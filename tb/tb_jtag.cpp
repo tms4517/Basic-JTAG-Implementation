@@ -25,7 +25,7 @@ std::vector<int> shiftDrTmsVec = {0, 1, 0, 0};
 
 int shiftDataVec_i = 0;
 std::vector<int> shiftDataVec0 = {1, 0, 1, 0, 1, 0};
-std::vector<int> shiftDataVec1 = {1, 1};
+std::vector<int> shiftDataVec1 = {1};
 int dataShiftCompleted = 0;
 
 int captureIrTmsVec_i = 0;
