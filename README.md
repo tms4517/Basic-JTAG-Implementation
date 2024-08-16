@@ -113,3 +113,4 @@ To run the simulation and generate the waveform:
 ```
 cd tb && make -f Makefile3 all
 ```
+**Note:** IP likely contains bugs.
