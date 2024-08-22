@@ -1,22 +1,17 @@
-# `make all` OR `make verilate` -> `make build` -> `make sim` -> `make waves`
-
 TOP_MODULE=jtag
 RTL_PATH=../rtl
 PACKAGE=jtag_pa
 
-.PHONY: all
+.PHONY: all clean verilate build sim waves
+
 all: clean verilate build sim waves
 
-.PHONY: verilate
 verilate: .stamp.verilate
 
-.PHONY: build
 build: obj_dir/Vjtag
 
-.PHONY: sim
 sim: waveform.vcd
 
-.PHONY: waves
 waves: waveform.vcd
 	@echo
 	@echo "### WAVES ###"
@@ -35,14 +30,20 @@ waveform.vcd: ./obj_dir/V$(TOP_MODULE)
 .stamp.verilate: $(RTL_PATH)/$(TOP_MODULE).sv tb_$(TOP_MODULE).cpp
 	@echo
 	@echo "### VERILATING ###"
+ifeq ($(test), SHIFT_DATAIN_OUT)
 	verilator -CFLAGS -DSHIFT_DATAIN_OUT -Wall --trace --x-assign unique --x-initial unique -cc -I../rtl/ $(PACKAGE).sv $(RTL_PATH)/$(TOP_MODULE).sv --top-module jtag --exe tb_$(TOP_MODULE).cpp
+else ifeq ($(test), CAPTUREIR_SHIFTIR)
+	verilator -CFLAGS -DCAPTUREIR_SHIFTIR -Wall --trace --x-assign unique --x-initial unique -cc -I../rtl/ $(PACKAGE).sv $(RTL_PATH)/$(TOP_MODULE).sv --top-module jtag --exe tb_$(TOP_MODULE).cpp
+else ifeq ($(test), SETIR_SHIFTDR)
+	verilator -CFLAGS -DSETIR_SHIFTDR -Wall --trace --x-assign unique --x-initial unique -cc -I../rtl/ $(PACKAGE).sv $(RTL_PATH)/$(TOP_MODULE).sv --top-module jtag --exe tb_$(TOP_MODULE).cpp
+else
+	@echo "Error: No test specified"
+endif
 	@touch .stamp.verilate
 
-.PHONY: lint
 lint: $(RTL_PATH)/$(TOP_MODULE).sv
 	verilator --lint-only -I../rtl/ $(PACKAGE).sv $(RTL_PATH)/$(TOP_MODULE).sv
 
-.PHONY: clean
 clean:
 	rm -rf .stamp.*;
 	rm -rf ./obj_dir
