@@ -30,13 +30,10 @@ waveform.vcd: ./obj_dir/V$(TOP_MODULE)
 .stamp.verilate: $(RTL_PATH)/$(TOP_MODULE).sv tb_$(TOP_MODULE).cpp
 	@echo
 	@echo "### VERILATING ###"
-ifeq ($(test), SHIFT_DATAIN_OUT)
-	verilator -CFLAGS -DSHIFT_DATAIN_OUT -Wall --trace --x-assign unique --x-initial unique -cc -I../rtl/ $(PACKAGE).sv $(RTL_PATH)/$(TOP_MODULE).sv --top-module jtag --exe tb_$(TOP_MODULE).cpp
-else ifeq ($(test), CAPTUREIR_SHIFTIR)
-	verilator -CFLAGS -DCAPTUREIR_SHIFTIR -Wall --trace --x-assign unique --x-initial unique -cc -I../rtl/ $(PACKAGE).sv $(RTL_PATH)/$(TOP_MODULE).sv --top-module jtag --exe tb_$(TOP_MODULE).cpp
-else ifeq ($(test), SETIR_SHIFTDR)
-	verilator -CFLAGS -DSETIR_SHIFTDR -Wall --trace --x-assign unique --x-initial unique -cc -I../rtl/ $(PACKAGE).sv $(RTL_PATH)/$(TOP_MODULE).sv --top-module jtag --exe tb_$(TOP_MODULE).cpp
-else
+ifdef test
+	verilator -CFLAGS -D$(test) -Wall --trace --x-assign unique --x-initial unique -cc -I../rtl/ $(PACKAGE).sv $(RTL_PATH)/$(TOP_MODULE).sv --top-module jtag --exe tb_$(TOP_MODULE).cpp
+endif
+ifndef test
 	@echo "Error: No test specified"
 endif
 	@touch .stamp.verilate
