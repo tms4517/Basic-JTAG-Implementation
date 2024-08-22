@@ -77,7 +77,7 @@ indicated by the red markers shown in the figure below.
 
 To run the simulation and generate the waveform:
 ```
-cd tb && make -f Makefile1 all
+cd tb && make all test=SHIFT_DATAIN_OUT
 ```
 
 ### demonstrate_CaptureIrShiftIr
@@ -93,7 +93,7 @@ cycles later.
 
 To run the simulation and generate the waveform:
 ```
-cd tb && make -f Makefile2 all
+cd tb && make all test=CAPTUREIR_SHIFTIR
 ```
 
 ### demonstrate_setIrShiftDr
@@ -111,6 +111,6 @@ by the blue marker.
 
 To run the simulation and generate the waveform:
 ```
-cd tb && make -f Makefile3 all
+cd tb && make all test=SETIR_SHIFTDR
 ```
 **Note:** IP likely contains bugs.
